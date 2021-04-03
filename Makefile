@@ -6,7 +6,7 @@ MONIKER=RnodeC
 LC_MONIKER=$(shell echo ${MONIKER} | tr '[:upper:]' '[:lower:]')
 WALLET=testwallet
 VERSION=0.4.5
-BASE_CTR=terrabase
+TERRABASE_CTR=terrabase
 
 # built vars
 MYTERRABASE_CTR=myterra-base-${LC_MONIKER}-${NETWORK}

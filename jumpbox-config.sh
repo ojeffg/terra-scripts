@@ -6,9 +6,10 @@ sudo mkdir /terradata
 sudo mount -t ext4 /dev/sdb /terradata
 sudo chmod 777 /terradata
 
+# update os and add a few packages
 sudo apt-get update -y
 sudo apt-get upgrade -y
-sudo apt-get install wget liblz4-tool aria2 -y
+sudo apt-get install wget liblz4-tool aria2 make -y
 
 git -C build-terra-base/ clone https://github.com/terra-project/core.git
 
@@ -27,3 +28,4 @@ echo \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 sudo apt-get update
 sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+sudo usermod -aG docker jo #log out and back in to pick up new group
