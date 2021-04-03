@@ -1,12 +1,13 @@
 
 NETWORK=tequila-0004
 SYNCURL=https://get.quicksync.io
-CHAINFILENAME=tequila-4-default.20210401.0940
 MONIKER=RnodeC
 LC_MONIKER=$(shell echo ${MONIKER} | tr '[:upper:]' '[:lower:]')
 WALLET=testwallet
 VERSION=0.4.5
 TERRABASE_CTR=terrabase
+DATADIR=/terradata
+CHAINFILENAME=tequila-4-default.20210401.0940
 
 # built vars
 MYTERRABASE_CTR=myterra-base-${LC_MONIKER}-${NETWORK}
@@ -16,25 +17,25 @@ MYLCD_CTR=myterra-lcd-${LC_MONIKER}-${NETWORK}
 
 #reference: https://terra.quicksync.io/
 get-chain:
-	echo; echo "[INFO] Downloading ${NETWORK} chain ${CHAINFILENAME}.tar.lz4 to ${PWD}"
-	aria2c -x5 ${SYNCURL}/${CHAINFILENAME}.tar.lz4
+	echo; echo "[INFO] Downloading ${NETWORK} chain ${CHAINFILENAME}.tar.lz4 to ${DATADIR}"
+	aria2c -x5 ${SYNCURL}/${CHAINFILENAME}.tar.lz4 -d ${DATADIR}
 	wget https://raw.githubusercontent.com/chainlayer/quicksync-playbooks/master/roles/quicksync/files/checksum.sh
 	wget https://get.quicksync.io/${CHAINFILENAME}.tar.lz4.checksum
 	curl -s https://lcd.terra.dev/txs/`curl -s https://get.quicksync.io/${CHAINFILENAME}.tar.lz4.hash`|jq -r '.tx.value.memo'|sha512sum -c
-	./checksum.sh ${CHAINFILENAME}.tar.lz4
-	lz4 -d ${CHAINFILENAME}.tar.lz4
-	echo "[INFO] Removing ${CHAINFILENAME}.tar.lz4"
-	rm -f ${CHAINFILENAME}.tar.lz4
-	tar xf ${CHAINFILENAME}.tar -C terradata/nets/${NETWORK}
-	echo "[INFO] Removing ${CHAINFILENAME}.tar"
-	rm -f ${CHAINFILENAME}.tar
+	./checksum.sh ${DATADIR}/${CHAINFILENAME}.tar.lz4
+	lz4 -d ${DATADIR}/${CHAINFILENAME}.tar.lz4 ${DATADIR}/${CHAINFILENAME}.tar
+	echo "[INFO] Removing ${DATADIR}/${CHAINFILENAME}.tar.lz4"
+	rm -f ${DATADIR}/${CHAINFILENAME}.tar.lz4
+	tar xf ${DATADIR}/${CHAINFILENAME}.tar -C ${DATADIR}/${NETWORK}
+	echo "[INFO] Removing ${DATADIR}/${CHAINFILENAME}.tar"
+	rm -f ${DATADIR}/${CHAINFILENAME}.tar
 	chown -R 1000:1000 terradata/${NETWORK}
 
 #start the container associated with this network/moniker/version and run terrad node
 run-terrad: 
 	echo; echo "[INFO] Starting ${MYTERRA_CTR} in terrad mode"; echo
 	docker run -it --rm \
-		-v ${PWD}/terradata/${NETWORK}/data:/terradata \
+		-v ${DATADIR}/${NETWORK}/data:/terradata \
 		-p 26656-26658:26656-26658 \
 		--hostname localterrad \
 		--name terrad \
@@ -44,7 +45,7 @@ run-terrad:
 run-terrad-shell: 
 	echo; echo "[INFO] Starting ${MYTERRAD_CTR} in shell mode"; echo
 	docker run -it --rm \
-		-v ${PWD}/terradata/${NETWORK}/data:/terradata  \
+		-v ${DATADIR}/${NETWORK}/data:/terradata  \
 		-p 26656-26658:26656-26658 \
 		--hostname localterrad \
 		--name terrad \
