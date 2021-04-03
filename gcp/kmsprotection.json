@@ -1,0 +1,7 @@
+{
+  "automatic": {
+    "customerManagedEncryption": {
+    	"kmsKeyName": "projects/terra-309517/locations/global/keyRings/jo/cryptoKeys/jo-key"
+    }
+  }
+}

@@ -1,0 +1,1 @@
+these are just syntax references of commands that have been used to get things set up in the cloud.  Definitely not to be ran blindly.  
