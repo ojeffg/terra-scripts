@@ -14,9 +14,7 @@ MYTERRAD_CTR=myterra-d-${LC_MONIKER}-${NETWORK}
 MYFEEDER_CTR=myterra-feeder-${LC_MONIKER}-${NETWORK}
 MYLCD_CTR=myterra-lcd-${LC_MONIKER}-${NETWORK}
 
-# https://terra.quicksync.io/
-# sudo apt-get update -y
-# sudo apt-get install wget liblz4-tool aria2 -y
+#reference: https://terra.quicksync.io/
 get-chain:
 	echo; echo "[INFO] Downloading ${NETWORK} chain ${CHAINFILENAME}.tar.lz4 to ${PWD}"
 	aria2c -x5 ${SYNCURL}/${CHAINFILENAME}.tar.lz4
@@ -70,14 +68,11 @@ run-feeder:
 		${MYFEEDER_CTR}:${VERSION} 
 
 
-
-
-
 # build the base terra ctr from upstream + layer on our base config specific to target network & moniker
 update-base-terra-ctr:
 	echo; echo "[INFO] Building new base ${BASE_CTR} container with tag: ${VERSION}"
 	echo; echo "[INFO] Pulling latest version of upstream git master"
-	git -C core/ pull
+	git -C build-terra-base/core/ pull
 	echo; echo "[INFO] Pulling latest version of alpine:3.12"
 	docker pull alpine:3.12
 	docker build -t ${TERRABASE_CTR}:${VERSION} build-terra-base/core/
